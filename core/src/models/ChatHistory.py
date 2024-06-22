@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from models import ChatHistoryMessage
 
 
 class ChatHistory(BaseModel):
-    _id: str
-    created_at: str | None = None
+    id: str = Field(..., alias="_id")
+    # created_at: str | None = None
     messages: list[ChatHistoryMessage] | None = None

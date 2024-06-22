@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 
 from web import engine_routes
+from web import chat_routes
 
 
 app = FastAPI()
 app.include_router(engine_routes.router)
+app.include_router(chat_routes.router)
 
 
 @app.get("/")

@@ -34,7 +34,39 @@ const BackendService = {
         } catch (error) {
             throw error;
         }
-    }
+    },
+
+    getMessages: async (chatId) => {
+        try {
+            const response = await request("GET", `/api/chats/get?chatId=${chatId}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+    
+    deleteChat: async (chatId) => {
+        try {
+            const response = await request("GET", `/api/chats/delete?chatId=${chatId}`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    query: async (chatId, message) => {
+        try{
+            const response = await request("POST", "/api/engine/query", {
+                "chatId": chatId,
+                "content": message
+            })
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    
 }
 
 export default BackendService;

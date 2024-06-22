@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../Chat/sidebar';
 import Chat from '../Chat/chat';
 
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAuthToken, setAuthHeader } from '../../custom-axios/axios';
+import MessageForm from '../Chat/message';
 
 
 const HomePage = (props) => {
@@ -12,49 +13,64 @@ const HomePage = (props) => {
 
     useEffect(() => {
         console.log("AUTH TOKEN: " + getAuthToken())
-        if (getAuthToken() == null || getAuthToken() == "null") {
+        if (getAuthToken() === null || getAuthToken() === "null") {
             navigate("/login");
         }
-        
-        props.getMessages();
         props.getChats();
+    }, []);
 
-        console.log("Helo helo")
-    },[]);
-    
+
+    useEffect(() => {
+        let _ = props.currentChat != null ? props.getMessages(props.currentChat) : null;
+        props.getChats();
+    }, [props.currentChat])
+
+
     return (
 
         <div class="row bg-podark pt-2">
-
-
             <div class="col-2 px-2">
+                <Sidebar chats={props.chats}
+                    getChats={props.getChats}
+                    deleteChat={props.deleteChat}
 
-                <Sidebar chats={props.chats} />
+                    currentChat={props.currentChat}
+                    setCurrentChat={props.setCurrentChat}
 
+                    createChat={props.createChat}
+                />
             </div>
-
 
             <div class="main-content col-10">
                 <div class="header row">
-                    <h5 class="col-10">ChatGPT</h5>
+                    <h5 class="col-10">Najdi ime za modelo</h5>
                     <div className="nav-item active col-2 ps-5 pe-0">
-                        <a title={"Logout"} className={"btn btn-outline-danger"}
+                        <Link title={"Logout"} className={"btn btn-outline-danger"}
                             onClick={() => {
                                 setAuthHeader(null);
-                                navigate("/login")
-                            }}>
+                            }}
+                            to={"/login"}>
                             Logout
-                        </a>
+                        </Link>
                     </div>
                 </div>
-                    <Chat messages={props.messages}/>
+                {props.currentChat == null ?
+                    <div className='' style={{ position: "absolute", top: "45%", left: "40%", zIndex: "4" }}>
+                        <p>To start chatting, select one of your previous chats from the sidebar or</p>
+                        <button className='btn btn-outline-info' style={{ width: "60%", marginLeft: "20%" }} onClick={() => {
+                            props.createChat()
+                        }}>Start a new chat</button>
+                    </div> : <></>
+                }
 
-                <div class="footer pb-4">
-                    <input type="text" class="form-control" placeholder="Type a message" />
-                    <button class="btn btn-primary">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
+                <Chat messages={props.messages} />
+
+                <MessageForm doQuery={props.doQuery}
+                    messages={props.messages}
+                    setMessages={props.setMessages}
+                    currentChat={props.currentChat}
+                />
+
             </div>
 
 

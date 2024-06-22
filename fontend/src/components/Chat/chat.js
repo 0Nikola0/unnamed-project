@@ -1,27 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-class Chat extends React.Component {
+const Chat = (props) => {
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            page: 0,
-            size: 5
-        }
-    }
-    render() {
-        return (
-            <div className="conversation ms-4" style={{ paddingInline: "250px", minWidth: "75vw" }}>
-                {this.props.messages.slice().reverse().map((item, index) => (
-                    <div key={index} className={"message " + item.role}>
-                        <strong>{item.role}</strong>
-                        <p>{item.content}</p>
-                    </div>
-                ))}
-            </div>
-        );
-    }
+    return (
+        <div className="conversation ms-4" style={{ paddingInline: "250px", minWidth: "75vw" }}>
+            {props.messages.slice().reverse().map((item, index) => (
+                <div key={index} className={"message " + JSON.parse(JSON.stringify(item)).role}>
+                    <strong>{JSON.parse(JSON.stringify(item)).role}</strong>
+                    <p>{JSON.parse(JSON.stringify(item)).content}</p>
+                </div>
+            ))}
+        </div>
+    );
 }
+
 
 export default Chat;

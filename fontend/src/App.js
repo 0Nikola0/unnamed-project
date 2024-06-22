@@ -1,88 +1,63 @@
 import './App.css';
-import React, { Component } from "react";
-import { BrowserRouter as Router, Redirect, Route, Routes, useNavigate } from 'react-router-dom'
-import BackendService from './repository/repository';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom'
 
-import { request, setAuthHeader, getAuthToken } from './custom-axios/axios';
+import {v4 as uuidv4} from 'uuid';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
+import BackendService from './repository/repository';
+import { setAuthHeader } from './custom-axios/axios';
+
 import Login from './components/Auth/login';
+import HomePage from './components/Pages/home';
 import Register from './components/Auth/register';
 
 
-import HomePage from './components/Pages/home';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+// TODO koa prvpat ukluces stranata ne mozes direkt da pises query do engine
+function App() {
+    const [messages, setMessages] = useState([]);
+    const [chats, setChats] = useState([]);
+    const [currentChat, setCurrentChat] = useState(null);
 
+    const doQuery = async (chatId, message) => {
 
-class App extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            chats: [],
-            messages: [],
-            selectedBook: {}
+        try {
+            const response = await BackendService.query(chatId, message);
+            return response.data
+        } catch (error) {
+            return false;
         }
     }
 
-    render() {
-
-        return (
-            <Router>
-                <main>
-                    <Routes>
-
-                        <Route path="/login" element={
-                            <Login onLogin={this.doLogin} />
-                        } />
-
-                        <Route path="/register" element={
-                            <Register onRegister={this.doRegister} />
-                        } />
-
-                        <Route path="/" element={
-                            <HomePage chats={this.state.chats}
-                                messages={this.state.messages}
-                                getMessages={this.getMessages}
-                                getChats={this.getAllChats} />
-                        } />
-
-                    </Routes>
-                </main>
-            </Router>
-        );
+    const createChat = () => {
+        setCurrentChat(uuidv4());
+        getChats();
     }
 
-    componentDidMount() {
-
+    const deleteChat = (chatId) => {
+        BackendService.deleteChat(chatId)
+        .then(() => getChats())
     }
 
-    getAllChats = () => {
-        // console.log("Called getAllChats")
-        // LabService.getChats()
-        //     .then((data) => {
-        //         console.log("get all chats api")
-        //         console.log(data);
-        //         // this.setState({
-        //         //     chats: data.data
-        //         // })
-        //     })
-        this.setState({
-            chats: [{ "name": "Rewrite this SQL code to Python", "key": 1, },
-            { "key": 2, "name": "What is the capital city of Macedonia?", }]
-        })
+    const getChats = () => {
+        BackendService.getChats()
+            .then((data) => {
+                setChats(JSON.parse(JSON.stringify(data.data)));
+                // console.log("App.js getAllChats: ", data.data)
+            })
     }
 
-    getMessages = () => {
-        this.setState({
-            messages: [
-                { "content": "How can i help you sir", "role": "assistant", "key": 1 },
-                { "content": "What is the capital city of Macedonia?", "role": "user", "key": 2 },
-                { "content": "The capital city of Macedonia is Sopje", "role": "assistant", "key": 3 },
-                { "content": "Thank you", "role": "user", "key": 4 }
-            ]
-        })
+    const getMessages = async (chatId) => {
+        try{
+            const response = await BackendService.getMessages(chatId)
+            // console.log("App.js getMessages: ", response.data)
+            setMessages(response.data.messages)
+        } catch (error) {
+            return false;
+        }
     }
 
-    doLogin = async (username, password) => {
+    const doLogin = async (username, password) => {
         try {
             const response = await BackendService.getLogin(username, password);
             setAuthHeader(response.data.token);
@@ -92,7 +67,7 @@ class App extends Component {
         }
     }
 
-    doRegister = async (firstName, lastName, username, password) => {
+    const doRegister = async (firstName, lastName, username, password) => {
         try {
             const response = await BackendService.getRegister(firstName, lastName, username, password)
             setAuthHeader(response.data.token);
@@ -101,6 +76,41 @@ class App extends Component {
             return false;
         }
     }
+
+    return (
+        <Router>
+            <main>
+                <Routes>
+
+                    <Route path="/login" element={
+                        <Login onLogin={doLogin} />
+                    } />
+
+                    <Route path="/register" element={
+                        <Register onRegister={doRegister} />
+                    } />
+
+                    <Route path="/" element={
+                        <HomePage chats={chats}
+                            getChats={getChats}
+                            deleteChat={deleteChat}
+
+                            currentChat={currentChat}
+                            setCurrentChat={setCurrentChat}
+                            createChat={createChat}
+
+                            messages={messages}
+                            setMessages={setMessages}
+                            getMessages={getMessages}
+
+                            doQuery={doQuery}
+                        />
+                    } />
+
+                </Routes>
+            </main>
+        </Router>
+    );
 }
 
 export default App;

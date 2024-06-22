@@ -1,41 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-class Sidebar extends React.Component {
+function Sidebar(props) {
 
-    constructor(props) {
-        super(props);
+    useEffect(() => {
+    }, [props.chats])
+    
+    useEffect(() => {
+    }, [props.currentChat])
 
-        this.state = {
-            page: 0,
-            size: 5
-        }
-    }
+    return (
 
-    render() {
-
-        // tuka deka so dodavame racno za dali da ima 'active' klasa ne zabravaj prazno mesto da ima prethodno
-        return (
-
-
-            <div class="sidebar pe-3">
-                <div class="sidebar-header pe-4 me-2">
-                    <h6 style={{ paddingInlineStart: "20px", fontWeight: "500", fontSize: "18px" }}>Previous chats</h6>
-                    <i class="fas fa-plus new-chat pluscheto"></i>
-                </div>
-
-                <div class="container-fluid ps-2" style={{ overflowY: "auto", maxHeight: "90vh" }}>
-                {this.props.chats.map((item, index) => (
-                    <a key={index} href="#" class="ps-2 pe-0">
-                    <span class="col-10 overflow-hidden">{item.name}</span>
-                    <i class="fas fa-ellipsis-h dot-menu col-2 "></i>
-                </a>
-                ))}
-
-                </div>
+        <div class="sidebar pe-3">
+            <div class="sidebar-header pe-4 me-2">
+                <h6 style={{ paddingInlineStart: "20px", fontWeight: "500", fontSize: "18px" }}>Previous chats</h6>
+                <i class="fas fa-plus new-chat pluscheto" onClick={() => {
+                    props.createChat()
+                }}></i>
             </div>
 
-        )
-    }
+            <div class="container-fluid ps-2" style={{ overflowY: "auto", maxHeight: "90vh" }}>
+                {props.chats.map((item, index) => {
+                    item = JSON.parse(JSON.stringify(item));
+                    return (
+                        <a key={index} href="#" className={"ps-2 pe-0 " + (props.currentChat != null && props.currentChat == item._id ? " active " : "")}>
+                            <span class="col-10 overflow-hidden" onClick={() => {
+                                props.setCurrentChat(item._id)
+                            }}>
+                                {item.messages && item.messages[0] ? item.messages[0].content : "Empty chat"}
+                            </span>
+                            <i className="fas fa-trash-alt col-2 trashcan-icon" onClick={() => {
+                                props.deleteChat(item._id)
+                            }}></i>
+                            {/* <i class="fas fa-ellipsis-h dot-menu col-2 "></i> */}
+                        </a>
+                    );
+                })}
+            </div>
+        </div>
+
+    )
 }
+
 
 export default Sidebar;

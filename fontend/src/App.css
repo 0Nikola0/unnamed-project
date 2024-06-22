@@ -48,7 +48,7 @@
   --sidebar-bg: #1e1e1e;
 }
 
-*{
+* {
   z-index: 3;
 }
 
@@ -141,18 +141,23 @@ body {
   border-radius: 8px;
 }
 
-.sidebar .dot-menu {
+.sidebar .trashcan-icon {
   color: white;
+  /* background-color: red; */
+  padding: 5px 0px;
+  text-align: center;
   cursor: pointer;
 }
 
-.sidebar .dot-menu:hover {
-  color: white;
+.sidebar .trashcan-icon:hover {
+  color: red;
+  /* background-color: red; */
+  padding: 5px 0px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: large;
 }
 
-.pluscheto:hover{
+.pluscheto:hover {
   background-color: var(--netemna-boja);
   padding: 5px;
   border-radius: 7px;
@@ -207,21 +212,25 @@ body {
 }
 
 .footer {
-  /* background-color: #f8f9fa; */
   background-color: var(--temna-pozadina);
   padding: 10px 20px;
   display: flex;
   align-items: center;
   padding-inline: 200px;
+  /* min-width: 92%; */
+  /* width: 200vw; */
+  /* margin-right: 100vw; */
+  padding-bottom: 200px;
 }
 
-.footer input {
-  flex-grow: 1;
-  margin-right: 10px;
+.footer>div {
+  /* flex-grow: 1; */
+  margin-left: 5vw;
   background-color: var(--temna-border);
   outline: none;
   border: none;
   border-radius: 15px;
+  min-width: 40vw;
 }
 
 .footer .btn {
@@ -236,4 +245,29 @@ body {
 
 .footer .btn i {
   margin: 0;
+}
+
+/* ============ */
+
+.loader {
+  border: 16px solid #f3f3f3;
+  /* Light grey */
+  border-top: 16px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  bottom: 35px;
+  animation: spin 2s linear infinite;
+  position: absolute;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }

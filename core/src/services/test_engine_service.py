@@ -9,7 +9,6 @@ def engine_chat(message, chat_history):
     return "I dont know"
 
 
-# TODO ovoa ke treba i u rl
 def translate_chat_history(chat: ChatHistory):
     return [
         msg
@@ -29,7 +28,6 @@ def query(message: IncomingMessage):
         message.content, transformed_chat_history
     )  # .response na krajo treba msm
 
-    # TODO posebno za sent_at i respinded_at?
     new_message = ChatHistoryMessage(
         user=message.content, system=engine_response, sent_at=str(datetime.now())
     )

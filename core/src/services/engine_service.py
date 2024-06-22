@@ -1,9 +1,10 @@
 from datetime import datetime
 from llama_index.llms.groq import Groq
+from llama_index.core import VectorStoreIndex, Settings
 from llama_index.embeddings.jinaai import JinaEmbedding
 from llama_index.core.base.llms.types import ChatMessage
-from llama_index.core import VectorStoreIndex, Settings
 from llama_index.vector_stores.qdrant import QdrantVectorStore
+from  llama_index.core.chat_engine.types import BaseChatEngine
 
 import settings
 from services import chat_history_service
@@ -11,7 +12,7 @@ from services.qdrant_service import qdrant_client
 from models import ChatHistory, ChatHistoryMessage, IncomingMessage
 
 
-def instance_engine():
+def instance_engine() -> BaseChatEngine:
     """
     Instances a chat engine
 
@@ -19,7 +20,7 @@ def instance_engine():
         - None
 
     Returns:
-        - engine: BaseChatEngine; The instanced chat engine
+        - engine: The instanced chat engine
     """
     print("INSTANCING ENGINE")
 
@@ -41,11 +42,10 @@ def instance_engine():
     index = VectorStoreIndex.from_vector_store(
         vector_store=vector_store,
         # TODO embed model mos ne mora da se navede tuka
-        embed_model=Settings.embed_model,
+        # embed_model=Settings.embed_model,
     )
 
     return index.as_chat_engine()
-    # return index.as_query_engine()
 
 
 QUERY_ENGINE = instance_engine()
@@ -69,17 +69,21 @@ def query(message: IncomingMessage, chat_history: ChatHistory) -> str:
     Runs the prompt through the LLM
 
     Parameters:
-        - message: ... # TODO to be continued mrze me sea dokumentacija 
+        - message: the message the user sent to the LLM
+        - chat_history: history of the messages in the interraction with the llm in the current chat
+
+    Returns:
+        - response: the response the LLM gave to the message 
     """
 
     chat_history = transform_chat_history(chat_history)
-
     response = QUERY_ENGINE.chat(message.content, chat_history=chat_history).response
 
-    # TODO razdeli go ovoa nekako da e nadvor od ovaa funkc
+    # --- Updates the chat history with the new messages --- #
     user_asked_message = ChatHistoryMessage(role="user", content=message.content, sent_at=str(datetime.now()))
     system_response_message = ChatHistoryMessage(role="assistant", content=response, sent_at=str(datetime.now()))
     chat_history_service.append_message(message.chat_id, user_asked_message)
     chat_history_service.append_message(message.chat_id, system_response_message)
+    # ----------------------------------------------------- # 
 
     return response

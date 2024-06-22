@@ -1,8 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class IncomingMessage(BaseModel):
-    chat_id: str
+    user_id: int = Field(..., alias="userId")
+    chat_id: str = Field(..., alias="chatId")
     content: str
     # TODO
     sent_at: str | None = None
