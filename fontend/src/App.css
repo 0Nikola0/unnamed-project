@@ -255,9 +255,10 @@ body {
   border-top: 16px solid #3498db;
   /* Blue */
   border-radius: 50%;
-  width: 20px;
+  width: 10px;
   height: 20px;
-  bottom: 35px;
+  bottom: 25px;
+  left: 495px;
   animation: spin 2s linear infinite;
   position: absolute;
 }
