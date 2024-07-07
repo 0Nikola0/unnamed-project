@@ -43,7 +43,7 @@ const HomePage = (props) => {
 
             <div class="main-content col-10">
                 <div class="header row">
-                    <h5 class="col-10">Najdi ime za modelo</h5>
+                    <h5 class="col-10">All knowing model</h5>
                     <div className="nav-item active col-2 ps-5 pe-0">
                         <Link title={"Logout"} className={"btn btn-outline-danger"}
                             onClick={() => {

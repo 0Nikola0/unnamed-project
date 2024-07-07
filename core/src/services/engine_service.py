@@ -4,7 +4,7 @@ from llama_index.core import VectorStoreIndex, Settings
 from llama_index.embeddings.jinaai import JinaEmbedding
 from llama_index.core.base.llms.types import ChatMessage
 from llama_index.vector_stores.qdrant import QdrantVectorStore
-from  llama_index.core.chat_engine.types import BaseChatEngine
+from llama_index.core.chat_engine.types import BaseChatEngine
 
 import settings
 from services import chat_history_service
@@ -61,7 +61,11 @@ def transform_chat_history(chat_history: ChatHistory) -> list[ChatMessage | None
     Returns:
         - list of ChatMessages or an empty list (if no messages are present in the chat)
     """
-    return [ChatMessage(role=m.role, content=m.content) for m in chat_history.messages] if chat_history.messages else []
+    return (
+        [ChatMessage(role=m.role, content=m.content) for m in chat_history.messages]
+        if chat_history.messages
+        else []
+    )
 
 
 def query(message: IncomingMessage, chat_history: ChatHistory) -> str:
@@ -73,17 +77,25 @@ def query(message: IncomingMessage, chat_history: ChatHistory) -> str:
         - chat_history: history of the messages in the interraction with the llm in the current chat
 
     Returns:
-        - response: the response the LLM gave to the message 
+        - response: the response the LLM gave to the message
     """
 
     chat_history = transform_chat_history(chat_history)
     response = QUERY_ENGINE.chat(message.content, chat_history=chat_history).response
 
     # --- Updates the chat history with the new messages --- #
-    user_asked_message = ChatHistoryMessage(role="user", content=message.content, sent_at=str(datetime.now()))
-    system_response_message = ChatHistoryMessage(role="assistant", content=response, sent_at=str(datetime.now()))
+    user_asked_message = ChatHistoryMessage(
+        role="user",
+        content=message.content,
+        sent_at=str(datetime.now()),
+    )
+    system_response_message = ChatHistoryMessage(
+        role="assistant",
+        content=response,
+        sent_at=str(datetime.now()),
+    )
     chat_history_service.append_message(message.chat_id, user_asked_message)
     chat_history_service.append_message(message.chat_id, system_response_message)
-    # ----------------------------------------------------- # 
+    # ----------------------------------------------------- #
 
     return response

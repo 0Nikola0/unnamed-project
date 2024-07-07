@@ -13,7 +13,7 @@ import HomePage from './components/Pages/home';
 import Register from './components/Auth/register';
 
 
-// TODO koa prvpat ukluces stranata ne mozes direkt da pises query do engine
+// TODO koa isteche auth tokeno avtomatski da go redirectne na login
 function App() {
     const [messages, setMessages] = useState([]);
     const [chats, setChats] = useState([]);
