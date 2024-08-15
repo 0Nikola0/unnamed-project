@@ -5,6 +5,8 @@ qdrant_data/
 .vscode/
 
 .env
+.env.prod
+src/data/processed/*/*
 
 testing/
 notes.md

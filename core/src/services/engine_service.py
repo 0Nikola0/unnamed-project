@@ -1,10 +1,18 @@
 from datetime import datetime
-from llama_index.llms.groq import Groq
+
+import tiktoken
+from llama_index.llms.openai import OpenAI
+from llama_index.core.schema import IndexNode
 from llama_index.core import VectorStoreIndex, Settings
-from llama_index.embeddings.jinaai import JinaEmbedding
 from llama_index.core.base.llms.types import ChatMessage
-from llama_index.vector_stores.qdrant import QdrantVectorStore
+from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core.chat_engine.types import BaseChatEngine
+from llama_index.vector_stores.qdrant import QdrantVectorStore
+from llama_index.core.postprocessor import LLMRerank, SentenceEmbeddingOptimizer
+
+# TODO MN BITNO!!!!!!
+# Tuka ima razlicni INDEXi vidi koj za so e i koj e najdobar
+from llama_index.core import SummaryIndex, GPTListIndex
 
 import settings
 from services import chat_history_service
@@ -23,29 +31,54 @@ def instance_engine() -> BaseChatEngine:
         - engine: The instanced chat engine
     """
     print("INSTANCING ENGINE")
-
-    Settings.llm = Groq(
-        model=settings.GROQ_MODEL,
-        api_key=settings.GROQ_API_KEY,
+    Settings.embed_model = OpenAIEmbedding(
+        model="text-embedding-3-small", embed_batch_size=100
     )
 
-    Settings.embed_model = JinaEmbedding(
-        model=settings.JINAAI_MODEL,
-        api_key=settings.JINAAI_API_KEY,
+    Settings.llm = OpenAI(
+        model=settings.OPENAI_MODEL_NAME,
+        temperature=settings.OPENAI_MODEL_TEMPERATURE,
     )
+
+    Settings.tokenizer = tiktoken.encoding_for_model(settings.OPENAI_MODEL_NAME).encode
 
     vector_store = QdrantVectorStore(
-        client=qdrant_client,
-        collection_name=settings.QDRANT_COLLECTION,
+        client=qdrant_client, collection_name=settings.QDRANT_COLLECTION
     )
 
     index = VectorStoreIndex.from_vector_store(
         vector_store=vector_store,
-        # TODO embed model mos ne mora da se navede tuka
-        # embed_model=Settings.embed_model,
+        embed_model=Settings.embed_model,
     )
 
-    return index.as_chat_engine()
+    predmetnik_index = IndexNode(
+        index_id="predmetnik_index",
+        obj=index.as_retriever(similarity_top_k=settings.SIMILARITY_TOP_K),
+        text="predmetnik_index",
+    )
+
+    summary_index = SummaryIndex(
+        objects=[
+            predmetnik_index,
+        ]
+    )
+
+    reranker = LLMRerank(
+        top_n=settings.RERANKER_TOP_N,
+        choice_batch_size=settings.SIMILARITY_TOP_K,
+    )
+
+    # nema bas nekoja razlika
+    # sentence_optimizer = SentenceEmbeddingOptimizer(
+    #     percentile_cutoff=settings.SENTENCE_PERCENTILE_CUTOFF
+    # )
+
+    query_engine = summary_index.as_chat_engine(
+        response_mode="compact", verbose=False,
+        node_postprocessors=[reranker, ],
+    )
+
+    return query_engine
 
 
 QUERY_ENGINE = instance_engine()

@@ -1,0 +1,1 @@
+namesto localhost treba imeto na kontejnerite da bide smeneno segde (moze so env file za local i za prod da se naprave avtomatski)
