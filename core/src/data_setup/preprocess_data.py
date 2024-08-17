@@ -1,3 +1,4 @@
+import os
 import re
 
 
@@ -57,9 +58,10 @@ def process_data():
 
         if len(filename) == 0 or len(filename) > 100:
             continue
+        
+        folder_path = "src/data/processed/predmetnik/"
+        os.makedirs(os.path.dirname(folder_path), exist_ok=True)
 
-        with open(
-            f"src/data/processed/predmetnik/{filename}.txt", "w", encoding="UTF-8"
-        ) as f:
+        with open(f"{folder_path}/{filename}.txt", "w", encoding="UTF-8") as f:
             f.write(predmet)
             print(f"Predmeti procesirani: {i}")
