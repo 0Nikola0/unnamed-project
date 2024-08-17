@@ -25,7 +25,13 @@ def get_chat(chat_id: str, user_id: int) -> ChatHistory:
     Returns:
         - ChatHistory instance of the chat
     """
-    chat = _messages_collection.find_one({"_id": chat_id, "user_id": user_id})
+    chat = _messages_collection.find_one(
+        {
+            "_id": chat_id,
+            "user_id": user_id,
+            "$or": [{"is_deleted": False}, {"is_deleted": {"$exists": False}}],
+        }
+    )
 
     if chat:
         return ChatHistory(**chat)
@@ -44,13 +50,15 @@ def create_chat(chat_id: str, user_id: int) -> ChatHistory:
     Returns:
         - ChatHistory instance of the chat
     """
-    _messages_collection.insert_one({"_id": chat_id, "user_id": user_id, "messages": []})
+    _messages_collection.insert_one(
+        {"_id": chat_id, "user_id": user_id, "messages": []}
+    )
     return get_chat(chat_id, user_id)
 
 
 def get_or_create_chat(chat_id: str, user_id: int) -> ChatHistory:
     """
-    Given a chat_id, if the chat exists in the databasse it returns it, 
+    Given a chat_id, if the chat exists in the databasse it returns it,
     else it creates a new chat with the given chat id and user_id and returns it
 
     Parameters:
@@ -70,33 +78,45 @@ def get_user_chats(user_id: int) -> list[ChatHistory | None]:
         - user_id: id of the user
 
     Returns:
-        - list of the chats the user has had or 
+        - list of the chats the user has had or
         empty list if no chats has been made from the user
     """
-    res = list(_messages_collection.find({"user_id": user_id}))
-    print(f"Returning chats for user {user_id}. TOtal number: {len(res)}")
+    res = list(
+        _messages_collection.find(
+            {
+                "user_id": user_id,
+                "$or": [{"is_deleted": False}, {"is_deleted": {"$exists": False}}],
+            }
+        )
+    )
     return res
-    # return list(_messages_collection.find({"user_id": user_id}))
 
 
-def delete_chat(chat_id: str, user_id: int) -> None:
+def delete_chat(chat_id: str, user_id: int, soft_delete=True) -> None:
     """
     Deletes a chat with the given id
 
     Parameters:
         - chat_id: id of the chat to be deleted
 
-    Returns: 
+    Returns:
         - None
 
     Exceptions:
-        - Raises an exception if it fails, 
+        - Raises an exception if it fails,
         eg. a chat with the given id is not in the database
     """
-    result = _messages_collection.delete_one({"_id": chat_id, "user_id": user_id})
+    if soft_delete:
+        result = _messages_collection.update_one({"_id": chat_id, "user_id": user_id}, {"$set": {"is_deleted": True}})
+        
+        if result.modified_count <= 0:
+            raise f"The chat with id {chat_id} was not deleted"
 
-    if result.deleted_count <= 0:
-        raise f"The chat with id {chat_id} was not deleted"
+    else:
+        result = _messages_collection.delete_one({"_id": chat_id, "user_id": user_id})
+        
+        if result.deleted_count <= 0:
+            raise f"The chat with id {chat_id} was not deleted"
 
 
 def append_message(chat_id: str, message: ChatHistoryMessage) -> None:
@@ -106,7 +126,7 @@ def append_message(chat_id: str, message: ChatHistoryMessage) -> None:
     Parameters:
         - chat_id: id of the chat the message is to be added to
         - message: the message that is to be added to the chat
-    
+
     Returns:
         - None
 
@@ -115,9 +135,6 @@ def append_message(chat_id: str, message: ChatHistoryMessage) -> None:
         eg. a chat with the given id is not in the database
     """
 
-    print(f"Append za {chat_id}")
-    print(message)
-    
     result = _messages_collection.update_one(
         {"_id": chat_id},
         {"$push": {"messages": message.model_dump()}},
