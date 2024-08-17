@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAuthToken } from '../../custom-axios/axios';
 
 
@@ -56,7 +56,7 @@ const Register = (props) => {
                                         id="firstName"
                                         name="firstName"
                                         required
-                                        placeholder="Nikola"
+                                        placeholder="First name"
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -67,7 +67,7 @@ const Register = (props) => {
                                         id="lastName"
                                         name="lastName"
                                         required
-                                        placeholder="Nikola"
+                                        placeholder="Last name"
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -78,7 +78,7 @@ const Register = (props) => {
                                         id="name"
                                         name="username"
                                         required
-                                        placeholder="nikola"
+                                        placeholder="Username"
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -93,6 +93,9 @@ const Register = (props) => {
                                     />
                                 </div>
                                 <button id="submit" type="submit" className="btn btn-primary mt-3">Register</button>
+                                <Link title={"Logout"} className={"mt-3 ms-3 btn btn-success"}to={"/login"}>
+                                    Go to login instead
+                                </Link>
                             </form>
                         </div>
                     </div>

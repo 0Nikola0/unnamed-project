@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAuthToken } from '../../custom-axios/axios';
 
 
@@ -68,6 +68,9 @@ const Login = (props) => {
                                     />
                                 </div>
                                 <button id="submit" type="submit" className="btn btn-primary mt-3">Login</button>
+                                <Link title={"Logout"} className={"mt-3 ms-3 btn btn-success"}to={"/register"}>
+                                    Go to register instead
+                                </Link>
                             </form>
                         </div>
                     </div>
