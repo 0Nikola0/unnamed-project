@@ -28,7 +28,7 @@ services:
     depends_on:
       - backend-db
     env_file:
-      - ./backend/.env
+      - ./backend/.env.prod
     ports:
       - "8080:8080"
 
