@@ -5,46 +5,50 @@
 
 # МКД
 ## Стартување
-1. Дозволете изврушање на скриптите
+1. Пополнете ги `.env.prod` во `/core/`, `/backend/` и `/fontend/` според `env.example`
+
+2. Дозволете изврушање на скриптите
 ```
 chmod +x install_java.sh setup.sh start.sh
 ```
 
-2. Инсталирајте Јава
+3. Инсталирајте open-jdk
 ```
 ./install_java.sh
 ```
-- Доколку Јава е веќе инсталирана, прескокнете кон 3.
+- Прескокнете доколку е веќе инсталиран.
 
-3. При стартување на системот за прв пат се користи:
+4. При стартување на системот за прв пат се користи:
 ```
 ./setup.sh
 ```
 
-4. При секое наредно стартување се користи:
+5. При секое наредно стартување се користи:
 ```
 ./start.sh
 ```
 
 # ENG 
 ## Start
-1. Allow script execution
+1. Fill `.env.prod` in `/core/`, `/backend/` and `/fontend/` by `env.example`
+
+2. Allow script execution
 ```
 chmod +x install_java.sh setup.sh start.sh
 ```
 
-2. Install Java
+3. Install Java
 ```
 ./install_java.sh
 ```
 - If java is aready installed, skip to 3.
 
-3. Starting the system for the first time:
+4. Starting the system for the first time:
 ```
 ./setup.sh
 ```
 
-4. Starting the system every next time:
+5. Starting the system every next time:
 ```
 ./start.sh
 ```
