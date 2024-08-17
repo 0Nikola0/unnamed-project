@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker compose up --scale core-setup=0
+docker compose up --scale core-setup=0 -d
