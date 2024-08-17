@@ -55,7 +55,8 @@ services:
     env_file:
       - ./core/.env.prod
     depends_on:
-      - core-setup
+      - core-vector-database
+      - core-chats-dbs
   
   core-setup:
     container_name: core-setup
