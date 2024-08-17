@@ -1,6 +1,7 @@
 package com.unnamedproject.backend.controllers;
 
 import com.unnamedproject.backend.dtos.UserDto;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -10,7 +11,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/api/chats")
 public class ChatController {
 
-    private String chatBaseUrl = "http://127.0.0.1:8000/chats";
+    private final String chatBaseUrl;
+
+    public ChatController(Environment env) {
+        this.chatBaseUrl = env.getProperty("core.url") + "/chats";
+    }
 
     @GetMapping("/get_all")
     public String GetAllChatsForUser(Authentication auth) {

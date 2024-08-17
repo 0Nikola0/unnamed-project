@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const Chat = (props) => {
 
@@ -7,7 +8,7 @@ const Chat = (props) => {
             {props.messages.slice().reverse().map((item, index) => (
                 <div key={index} className={"message " + JSON.parse(JSON.stringify(item)).role}>
                     <strong>{JSON.parse(JSON.stringify(item)).role}</strong>
-                    <p>{JSON.parse(JSON.stringify(item)).content}</p>
+                    <ReactMarkdown>{JSON.parse(JSON.stringify(item)).content}</ReactMarkdown>
                 </div>
             ))}
         </div>

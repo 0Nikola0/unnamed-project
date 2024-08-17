@@ -2,6 +2,7 @@ package com.unnamedproject.backend.controllers;
 
 import com.unnamedproject.backend.dtos.EngineQueryDto;
 import com.unnamedproject.backend.dtos.UserDto;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,11 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/api/engine")
 public class EngineController {
 
-    private String engineBaseUrl = "http://127.0.0.1:8000/engine";
+    private final String engineBaseUrl;
+
+    public EngineController(Environment env) {
+        this.engineBaseUrl = env.getProperty("core.url") + "/engine";
+    }
 
     @PostMapping("/query")
     public String quergine(@RequestBody EngineQueryDto queryDto, Authentication auth) {

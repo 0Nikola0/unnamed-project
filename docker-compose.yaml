@@ -11,6 +11,8 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     command: npm start
+    env_file:
+      - ./fontend/.env.prod
     ports:
       - "3000:3000"
     depends_on:
@@ -25,23 +27,20 @@ services:
     command: java -jar /app.jar
     depends_on:
       - backend-db
-    environment:
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO}
+    env_file:
+      - ./backend/.env
     ports:
       - "8080:8080"
 
   backend-db:
     image: postgres:latest
-    container_name: products_db
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+    container_name: backend-db
+    env_file:
+      - ./backend/.env.prod
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   # --- CORE --- #
   core:
@@ -54,7 +53,7 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - ./src/.env.prod
+      - ./core/.env.prod
     depends_on:
       - core-setup
   
@@ -65,6 +64,8 @@ services:
       dockerfile: Dockerfile
     restart: no
     command: sh -c "PYTHONPATH=src python -m src.data_setup"
+    env_file:
+      - ./core/.env.prod
     depends_on:
       - core-vector-database
 
@@ -82,7 +83,19 @@ services:
     volumes:
       - ./qdrant_data:/qdrant/storage
 
+  core-chats-db:
+    image: mongo:latest
+    container_name: core-chats-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
 configs:
   qdrant_config:
     content: |
-      log_level: INFO      
+      log_level: INFO
+
+volumes:
+  pgdata:
+  mongo-data:
