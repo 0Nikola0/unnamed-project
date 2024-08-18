@@ -7,11 +7,10 @@ const Login = (props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("AUTH TOKEN: " + getAuthToken())
         if (getAuthToken() != null && getAuthToken() != "null") {
             navigate("/");
         }
-    },[navigate]);
+    }, [navigate]);
 
 
     const [formData, updateFormData] = React.useState({
@@ -31,10 +30,7 @@ const Login = (props) => {
         const username = formData.username;
         const password = formData.password;
 
-        const ok = await props.onLogin(username, password);
-        // console.log(ok)
-        // ok ? navigate("/") : navigate("/login");
-        navigate("/");
+        await props.onLogin(username, password) ? navigate("/") : navigate("/login");
     }
 
     return (
@@ -68,7 +64,7 @@ const Login = (props) => {
                                     />
                                 </div>
                                 <button id="submit" type="submit" className="btn btn-primary mt-3">Login</button>
-                                <Link title={"Logout"} className={"mt-3 ms-3 btn btn-success"}to={"/register"}>
+                                <Link title={"Logout"} className={"mt-3 ms-3 btn btn-success"} to={"/register"}>
                                     Go to register instead
                                 </Link>
                             </form>

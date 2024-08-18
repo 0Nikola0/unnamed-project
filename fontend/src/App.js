@@ -2,6 +2,7 @@ import './App.css';
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom'
 
+import Swal from 'sweetalert2';
 import {v4 as uuidv4} from 'uuid';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -25,6 +26,12 @@ function App() {
             const response = await BackendService.query(chatId, message);
             return response.data
         } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'The model doesn\'t want to talk with you anymore',
+                text: error.message || 'An unexpected error occurred',
+                confirmButtonText: 'Say you\'re sorry',
+            });
             return false;
         }
     }
@@ -43,16 +50,29 @@ function App() {
         BackendService.getChats()
             .then((data) => {
                 setChats(JSON.parse(JSON.stringify(data.data)));
-                // console.log("App.js getAllChats: ", data.data)
+            })
+            .catch((error) => { 
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed to get previous conversations',
+                    text: error.message || 'An unexpected error occurred',
+                    confirmButtonText: 'Try Again',
+                });
+                return false;
             })
     }
 
     const getMessages = async (chatId) => {
         try{
             const response = await BackendService.getMessages(chatId)
-            // console.log("App.js getMessages: ", response.data)
             setMessages(response.data.messages)
         } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to get messages',
+                text: error.message || 'An unexpected error occurred',
+                confirmButtonText: 'Try Again',
+            });
             return false;
         }
     }
@@ -63,6 +83,12 @@ function App() {
             setAuthHeader(response.data.token);
             return response.status === 200;
         } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: error.message || 'An unexpected error occurred',
+                confirmButtonText: 'Try Again',
+            });
             return false;
         }
     }
@@ -73,6 +99,12 @@ function App() {
             setAuthHeader(response.data.token);
             return response.status === 200;
         } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Register Failed',
+                text: error.message || 'An unexpected error occurred',
+                confirmButtonText: 'Try Again',
+            });
             return false;
         }
     }

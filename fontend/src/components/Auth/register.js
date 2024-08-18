@@ -7,7 +7,6 @@ const Register = (props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("AUTH TOKEN: " + getAuthToken())
         if (getAuthToken() != null && getAuthToken() != "null") {
             navigate("/");
         }
@@ -35,9 +34,7 @@ const Register = (props) => {
         const lastName = formData.lastName;
         const password = formData.password;
 
-        await props.onRegister(firstName, lastName, username, password);
-        navigate("/");
-
+        await props.onRegister(firstName, lastName, username, password) ? navigate("/") : navigate("/register");
     }
 
     return (
@@ -93,7 +90,7 @@ const Register = (props) => {
                                     />
                                 </div>
                                 <button id="submit" type="submit" className="btn btn-primary mt-3">Register</button>
-                                <Link title={"Logout"} className={"mt-3 ms-3 btn btn-success"}to={"/login"}>
+                                <Link title={"Logout"} className={"mt-3 ms-3 btn btn-success"} to={"/login"}>
                                     Go to login instead
                                 </Link>
                             </form>

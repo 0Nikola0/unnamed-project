@@ -12,7 +12,6 @@ const HomePage = (props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("AUTH TOKEN: " + getAuthToken())
         if (getAuthToken() === null || getAuthToken() === "null") {
             navigate("/login");
         }
