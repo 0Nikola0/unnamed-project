@@ -272,3 +272,7 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.modal-content {
+  background-color: #201f1f;
+}

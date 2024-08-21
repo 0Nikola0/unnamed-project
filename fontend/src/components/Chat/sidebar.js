@@ -12,7 +12,7 @@ function Sidebar(props) {
 
         <div class="sidebar pe-3">
             <div class="sidebar-header pe-4 me-2">
-                <h6 style={{ paddingInlineStart: "20px", fontWeight: "500", fontSize: "18px" }}>Previous chats</h6>
+                <h6 style={{ paddingInlineStart: "20px", fontWeight: "500", fontSize: "18px" }}>Разговори</h6>
                 <i class="fas fa-plus new-chat pluscheto" onClick={() => {
                     props.createChat()
                 }}></i>

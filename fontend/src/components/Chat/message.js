@@ -38,11 +38,12 @@ const MessageForm = (props) => {
                 <div className="form-group">
                     <input
                         type="text"
+                        autoComplete='off'
                         className="form-control"
                         id="message"
                         name="message"
                         required
-                        placeholder="Type a message"
+                        placeholder="Постави прашање..."
                         value={formData.message}
                         onChange={handleChange}
                         disabled={loading || props.currentChat == null}
