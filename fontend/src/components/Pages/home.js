@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAuthToken, setAuthHeader } from '../../custom-axios/axios';
 import MessageForm from '../Chat/message';
+import InfoModal from '../Modals/infoModal';
 
 
 const HomePage = (props) => {
@@ -41,24 +42,27 @@ const HomePage = (props) => {
             </div>
 
             <div class="main-content col-10">
+
+                <InfoModal></InfoModal>
+
                 <div class="header row">
-                    <h5 class="col-10">All knowing model</h5>
+                    <h4 class="col-10 fw-bold">Академус</h4>
                     <div className="nav-item active col-2 ps-5 pe-0">
                         <Link title={"Logout"} className={"btn btn-outline-danger"}
                             onClick={() => {
                                 setAuthHeader(null);
                             }}
                             to={"/login"}>
-                            Logout
+                            Одјави се
                         </Link>
                     </div>
                 </div>
                 {props.currentChat == null ?
                     <div className='' style={{ position: "absolute", top: "45%", left: "40%", zIndex: "4" }}>
-                        <p>To start chatting, select one of your previous chats from the sidebar or</p>
+                        <p>За да разговараш со моделот, притисни на:</p>
                         <button className='btn btn-outline-info' style={{ width: "60%", marginLeft: "20%" }} onClick={() => {
                             props.createChat()
-                        }}>Start a new chat</button>
+                        }}>Започни нов разговор</button>
                     </div> : <></>
                 }
 
